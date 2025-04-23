@@ -168,9 +168,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    │ a d j u s t                                               │
    └───────────────────────────────────────────────────────────┘
              ┌─────────┬─────────┬─────────┬─────────┬─────────┐                    ┌─────────┬─────────┬─────────┬─────────┬─────────┐
-             │ AUDIO   │ HAPTIC  │ RGB HUE │ RGB MOD │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │   
+             │ AUDIO   │         │ RGB HUE │ RGB MOD │         │ ╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮╭╮ │         │         │         │         │         │   
    ┌─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤ │╰╯╰╯╰╯╰╯╰╯╰╯╰╯╰╯│ ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┐
-   │  RESET  │ DEBUG   │ QWERTY  │ RGB SAT │         │         ├─╯                ╰─┤         │         │         │         │         │         │
+   │  RESET  │ DEBUG   │         │ RGB SAT │         │         ├─╯                ╰─┤         │         │         │         │         │         │
    ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤╭────────╮╭────────╮├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
    │  MAKE   │ OS SWAP │ COLEMAK │ RGB VAL │         │         ││  MUTE  ││PLY/PSE ││         │         │         │         │         │         │
    └─────────┴─────────┴─────────┼─────────┼─────────┼─────────┼╰────────╯╰────────╯┼─────────┼─────────┼─────────┼─────────┴─────────┴─────────┘
@@ -179,9 +179,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
    [_ADJUST] = LAYOUT_polydactyl(
  //╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷╷         ╷         ╷         ╷         ╷         ╷         ╷         ╷
-              AU_TOG,   HPT_TOG,  RGB_HUI,  RGB_MOD,  XXXXXXX,                       XXXXXXX,  KXXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,   
-    QK_BOOT,  DB_TOGG,  QWERTY,   RGB_SAI,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
-    MAKE_H,   OS_SWAP,  COLEMAK,  RGB_VAI,  XXXXXXX,  XXXXXXX,  KC_MUTE,   KC_MPLY,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+              AU_TOGG,  XXXXXXX,  RGB_HUI,  RGB_MOD,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,   
+    QK_BOOT,  DB_TOGG,  XXXXXXX,  RGB_SAI,  XXXXXXX,  XXXXXXX,                       XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    MAKE_H,   OS_SWAP, COLEMAK_DHM,RGB_VAI,  XXXXXXX,  XXXXXXX,  KC_MUTE,   KC_MPLY,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
                                   TO(0),    TO(0),    TO(0),    TO(0),     TO(0),    TO(0),    TO(0),    TO(0) 
  )
 
@@ -310,36 +310,6 @@ void keyboard_post_init_user(void) {
 char layer_state_str[24];
 char o_text[24] = "";
 int dmacro_num = 0; 
-
-#ifdef DYNAMIC_MACRO_ENABLE
-    char dmacro_text[4][24] = { "", "RECORDING", "STOP RECORDING",  "PLAY RECORDING"};
-    static uint16_t dmacro_timer;
-    const char PROGMEM rec_ico[] = {0xD1, 0xE1, 0};
-    const char PROGMEM stop_ico[] = {0xD3, 0xE1, 0};
-    const char PROGMEM play_ico[] = {0xD2, 0xE1, 0};
-
-
-    // DYNMACRO RECORD ├─────────────────────────────────────────────────────────────┐
-    void dynamic_macro_record_start_user(void) {
-          dmacro_num = 1;
-        return;
-    }
-
-    // DYNMACRO STOP RECORDING ├─────────────────────────────────────────────────────┐
-    void dynamic_macro_record_end_user(int8_t direction) {
-          dmacro_num = 2;
-          dmacro_timer = timer_read();
-        return; 
-    }
-
-    // DYNMACRO PLAY RECORDING ├─────────────────────────────────────────────────────┐
-    void dynamic_macro_play_user(int8_t direction) {
-          dmacro_num = 3;
-          dmacro_timer = timer_read();
-        return; 
-    }
-#endif //DYNAMIC_MACRO_ENABLE
-
 
 void matrix_scan_user(void) {
   #ifdef DYNAMIC_MACRO_ENABLE
@@ -601,7 +571,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case COLEMAK_DHM:
             if (record->event.pressed) {
-                set_single_persistent_default_layer(_COLEMAK);
+                set_single_persistent_default_layer(_COLEMAK_DHM);
                 #ifdef HAPTIC_ENABLE
                   DRV_pulse(transition_hum);
                 #endif // HAPTIC_ENABLE
